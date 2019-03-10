@@ -99,9 +99,7 @@
                 console.log(response); 
                 var data = response;
                 
-                //for each data sent back (i = id, v = value of each data)
                 $.each(data, function(i,v){
-                    //add value to display tab
                     $("#display").append(v.service_request_number + " ");
                     $("#display").append(v.street_address + " ");
                     $("#display").append(v.where_is_the_graffiti_located_ + " ");
