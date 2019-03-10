@@ -9,7 +9,7 @@
 	 crossorigin="anonymous">
 	<style>
 		.template, .content{
-			<!--display: none;-->
+			display: none;
 		}
 	</style> 
     <title>Begone Graffiti</title>
@@ -69,6 +69,55 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     
+        
+       <!--ScriptsForData-->
+        
+        <script>
+     $(document).ready(function() {
+        $("#about").show();
+          
+        function hideScreens() {
+          $(".content").hide();
+        }
+        
+        $(".nav-link").on("click", function(){
+          hideScreens();
+          var target = $(this).attr("href");
+          $(target).show();
+        });
+
+        $("#search").on("click", function() {
+            $("#display").empty();
+
+            var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=5";
+
+            var searchWard = $("#ward").val();
+            var searchStatus = $("#status").val();
+            var url = endpoint + "&status=" + searchStatus + "&ward=" + searchWard;
+
+            $.get(url, function(response) {
+                console.log(response); 
+                var data = response;
+                
+                //for each data sent back (i = id, v = value of each data)
+                $.each(data, function(i,v){
+                    //add value to display tab
+                    $("#display").append(v.service_request_number + " ");
+                    $("#display").append(v.street_address + " ");
+                    $("#display").append(v.where_is_the_graffiti_located_ + " ");
+                    $("#display").append(v.what_type_of_surface_is_the_graffiti_on_ + " ");
+                    $("#display").append(v.creation_date + " ");
+                    $("#display").append(v.status + " ");
+                    $("#display").append(v.completion_date + " ");
+                    $("#display").append("<br>");
+                });
+            });
+        });
+      });
+            
+        </script>
+       
+        
 	</body>
 </html>
 
