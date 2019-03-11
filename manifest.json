@@ -1,0 +1,14 @@
+{
+  "name": "Begone Graffiti,
+  "short_name": "GR",
+  "icons": [ {
+        "src": "App.png,
+        "type": "image/png",
+        "sizes": "144x144"
+      }],
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2196F3",
+  "theme_color": "#2196F3"
+}
