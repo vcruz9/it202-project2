@@ -4,13 +4,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--<link rel='manifest' href='./manifest.json'>-->
+    <link rel='manifest' href='./manifest.json'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
 	 crossorigin="anonymous">
 	<style>
 		.template, .content{
 			display: none;
 		}
+        body {
+            background-color:#e0ccff;
+        }
+        .card {
+            border-color: blue;
+        }
 	</style> 
     <title>Begone Graffiti</title>
   </head>
@@ -42,11 +48,13 @@
         <!--StartPage-->
         
       <div class="content" id="about">
-          <h1><center>Begone Graffiti!</center></h1><br>
-        <p><center>Hello and Welcome to the Graffiti Removal App! :D <br>Please proceed to the search tab to begin your inquiries! </p>
+        <h1><center>Begone Graffiti!</center></h1><br>
+        <center><p>Hello and Welcome to the Graffiti Removal App! :D <br>
+            Please proceed to the search tab to begin your inquiries! </p>
 		I am the very unfortunate devoloper, Veronica! ^.^ If you would like to see all the chaos that happened to create this app, <br>
-		head to this beautiful link <a href=" https://github.com/vcruz9"> here </a> . 
-	</center></div>
+		head to this beautiful link <a href="https://github.com/vcruz9/it202-project2"> here </a> . 
+	   </center>
+    </div>
     
         <!--SearchPage-->
        <div class="content" align="center" id="home">
@@ -60,8 +68,8 @@
                 <b>Status: </b>
                 <br>
                  <select id=status>
-                    <option value="open">Open</option>
-                    <option value="complete">Completed</option>
+                    <option value="Open">Open</option>
+                    <option value="Completed">Completed</option>
                 </select> 
             </div>
             <div class="col-lg-4">
@@ -71,11 +79,10 @@
     </div>
 	
         
-         <!--DetailsPage-->
+    <!--DetailsPage-->
     <div class="content" id="display">
         <h1> <center>Here, you can find information about your searches! How Neat!</center></h1>
-        
-        </div>
+    </div>
     
     <!--Map display page-->
     <div class="content" id="map" style="height: 600px; width: 600px">
@@ -83,7 +90,7 @@
         
 		
 		<!--CardsForDataFix-->
-	<div class="card-template" style="width: 20rem;">
+	<div class="card template"  style="width: 20rem;">
 		<div class="card-body">
 			<h5 class="card-number"><b>Service Number:</b></h5>
 			<h6 class="street"><b>Address:</b></h6>
@@ -124,32 +131,86 @@
 
             var searchWard = $("#ward").val();
             var searchStatus = $("#status").val();
-			var length = $("#length").val();
-
             var url = endpoint + "&status=" + searchStatus + "&ward=" + searchWard;
-
+            console.log(url);
+            
             $.get(url, function(response) {
-                console.log(response); 
+                //console.log(response); 
                 var data = response;
-                
+                //console.log(data);
                 $.each(data, function(i,v){
-                   clone.find(".card-number").text(v.service_request_number);
+                    var clone = $(".template").clone();
+                    clone.find(".card-number").text(v.service_request_number);
                     clone.find(".street").text(v.street_address);
                     clone.find(".location").text(v.where_is_the_graffiti_located_);
                     clone.find(".surface").text(v.what_type_of_surface_is_the_graffiti_on_);
-                    clone.find(".creation").text(v.creation_date.split("T00:00:00.000"));
+                    clone.find(".creation").text(v.creation_date);
                     clone.find(".status").text(v.status);
                     clone.find(".completion").text(v.completion_date);           
-                    clone.removeClass("card-template") 
-					
+                    clone.removeClass("template") 
                     $("#display").append(clone); 
                 });
             });
         });
-      });
+      });        
+    </script>
+		
+<!-- GoogleMapScript --> 
+    <script>
+        $("#search").on("click", function() {
+            var searchWard = parseInt($("#ward").val());
+            var searchStatus = $("#status").val();
+            initMap(searchWard, searchStatus);
+        });
+        
+        function initMap(ward,status) {
+            var endpoint = "https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=5";
+            var url = endpoint + "&status=" + status + "&ward=" + ward;
+            var startup = {lat: 41.8781, lng: -87.6298};
+            var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 9, center: startup});
             
-        </script>
-       
+            $.get(url, function(response){
+                var data = response;
+
+                $.each(data, function(i,v){
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(parseFloat(v.latitude),parseFloat(v.longitude)),
+                        map: map,
+                    });
+                    
+                    var content = v.service_request_number + v.street_address + v.where_is_the_graffiti_located_ + v.what_type_of_surface_is_the_graffiti_on_ + v.creation_date + v.status + v.completion_date;
+                    
+                    google.maps.event.addListener(marker, 'click', function() {
+                            infowindow = new google.maps.InfoWindow({
+                                content: content
+                            });
+                            infowindow.open(map, marker);
+                    });     
+                });
+            });
+        }
+    </script>
+        
+            <!-- Service Worker -->  
+    <script>
+        // register the service worker for offline use
+        if('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(function() { 
+            //Registeration success
+            console.log("Service Worker Registered"); 
+        }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+    });
+
+        }
+    </script>
+		
+        <!--GoogleMapsAPI-->  
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsmyrEvpVzsnsrMvCjsPRxGzgWf6qbgQo">
+    </script>
         
 	</body>
 </html>
