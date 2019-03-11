@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='manifest' href='./manifest.json'>
+    <!--<link rel='manifest' href='./manifest.json'>-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
 	 crossorigin="anonymous">
 	<style>
@@ -44,7 +44,9 @@
       <div class="content" id="about">
           <h1><center>Begone Graffiti!</center></h1><br>
         <p><center>Hello and Welcome to the Graffiti Removal App! :D <br>Please proceed to the search tab to begin your inquiries! </p>
-    </center></div>
+		I am the very unfortunate devoloper, Veronica! ^.^ If you would like to see all the chaos that happened to create this app, <br>
+		head to this beautiful link <a href=" https://github.com/vcruz9"> here </a> . 
+	</center></div>
     
         <!--SearchPage-->
        <div class="content" align="center" id="home">
@@ -79,15 +81,25 @@
     <div class="content" id="map" style="height: 600px; width: 600px">
     </div>
         
-    <!--GoogleAPI-->
-     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHtlXJLYGtdVwxVeVRE_qwY6ADIBOTpvY&callback=initMap">
-    </script>  
-    
+		
+		<!--CardsForDataFix-->
+	<div class="card-template" style="width: 20rem;">
+		<div class="card-body">
+			<h5 class="card-number"><b>Service Number:</b></h5>
+			<h6 class="street"><b>Address:</b></h6>
+			<p class="location">Location:</p>
+			<p class="surface">Type Of Surface:</p>
+			<p class="creation">Creation Date:</p>
+			<p class="status">Status: </p>
+			<p class="completion">Completion Date: </p>
+		</div>
+	</div>
+		
+		
+
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    
         
        <!--ScriptsForData-->
         
@@ -112,6 +124,8 @@
 
             var searchWard = $("#ward").val();
             var searchStatus = $("#status").val();
+			var length = $("#length").val();
+
             var url = endpoint + "&status=" + searchStatus + "&ward=" + searchWard;
 
             $.get(url, function(response) {
@@ -119,14 +133,16 @@
                 var data = response;
                 
                 $.each(data, function(i,v){
-                    $("#display").append(v.service_request_number + " ");
-                    $("#display").append(v.street_address + " ");
-                    $("#display").append(v.where_is_the_graffiti_located_ + " ");
-                    $("#display").append(v.what_type_of_surface_is_the_graffiti_on_ + " ");
-                    $("#display").append(v.creation_date + " ");
-                    $("#display").append(v.status + " ");
-                    $("#display").append(v.completion_date + " ");
-                    $("#display").append("<br>");
+                   clone.find(".card-number").text(v.service_request_number);
+                    clone.find(".street").text(v.street_address);
+                    clone.find(".location").text(v.where_is_the_graffiti_located_);
+                    clone.find(".surface").text(v.what_type_of_surface_is_the_graffiti_on_);
+                    clone.find(".creation").text(v.creation_date.split("T00:00:00.000"));
+                    clone.find(".status").text(v.status);
+                    clone.find(".completion").text(v.completion_date);           
+                    clone.removeClass("card-template") 
+					
+                    $("#display").append(clone); 
                 });
             });
         });
